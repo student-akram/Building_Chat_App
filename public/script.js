@@ -79,7 +79,7 @@ if (loginForm) {
 
         alert("Login Successful");
 
-        window.location.href = "chat.html";
+        window.location.href = "index.html";
 
       } else {
 
