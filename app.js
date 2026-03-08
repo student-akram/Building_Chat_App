@@ -4,16 +4,25 @@ const path = require("path");
 
 const sequelize = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
+const chatRoutes = require('./routes/chatRoutes');
+const User = require("./models/user");
+const Message = require("./models/message");
+
+
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+User.hasMany(Message);
+Message.belongsTo(User);
 
 /* Serve frontend */
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/chat", chatRoutes);
 
 /* Default route -> open signup page */
 

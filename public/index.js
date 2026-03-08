@@ -1,30 +1,49 @@
+async function sendMessage(){
 
+const input = document.getElementById("messageInput");
+const messageText = input.value.trim();
 
-function sendMessage(){
+if(messageText === "") return;
 
-const input=document.getElementById("messageInput");
-const messageText=input.value.trim();
+const chatBox = document.getElementById("chatMessages");
 
-if(messageText==="") return;
+const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
-const chatBox=document.getElementById("chatMessages");
+try{
 
-const message=document.createElement("div");
+const token = localStorage.getItem("token");
+
+await fetch("http://localhost:5000/api/chat/send", {
+
+method: "POST",
+
+headers: {
+"Content-Type": "application/json",
+"Authorization": token
+},
+
+body: JSON.stringify({
+message: messageText
+})
+
+});
+
+}catch(error){
+console.log("Error sending message:", error);
+}
+
+const message = document.createElement("div");
 message.classList.add("message","sent");
 
-const time=new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-
-message.innerHTML=`
+message.innerHTML = `
 ${messageText}
 <span class="timestamp">${time}</span>
 `;
 
 chatBox.appendChild(message);
 
-/* Auto Scroll */
+chatBox.scrollTop = chatBox.scrollHeight;
 
-chatBox.scrollTop=chatBox.scrollHeight;
+input.value = "";
 
-input.value="";
 }
-
