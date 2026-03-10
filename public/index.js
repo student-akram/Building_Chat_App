@@ -1,5 +1,9 @@
-const socket = io("http://localhost:5000");
-
+const socket = io("http://localhost:5000",{
+auth:{
+token: localStorage.getItem("token")
+},
+transports:["websocket"]
+});
 socket.on("newMessage",(msg)=>{
 
 const chatBox = document.getElementById("chatMessages");
