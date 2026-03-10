@@ -1,30 +1,29 @@
 const Message = require('../models/message');
 
-exports.sendMessage = async (req, res) => {
+exports.sendMessage = async (req,res)=>{
 
-  try {
+try{
 
-    const { message } = req.body;
+const {message}=req.body;
+const userId=req.user.id;
 
-    const userId = req.user.id; // from JWT middleware
+const newMessage=await Message.create({
+message,
+userId
+});
 
-    const newMessage = await Message.create({
-      message: message,
-      userId: userId
-    });
+const io=req.app.get("io");
 
-    res.status(201).json({
-      success: true,
-      data: newMessage
-    });
+io.emit("newMessage",newMessage);
 
-  } catch (error) {
+res.status(201).json(newMessage);
 
-    res.status(500).json({
-      error: error.message
-    });
+}catch(err){
 
-  }
+console.log(err);
+res.status(500).json({error:err.message});
+
+}
 
 };
 exports.getMessages = async (req, res) => {

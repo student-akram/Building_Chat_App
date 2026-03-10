@@ -1,3 +1,34 @@
+const socket = io("http://localhost:5000");
+
+socket.on("newMessage",(msg)=>{
+
+const chatBox = document.getElementById("chatMessages");
+
+const messageDiv = document.createElement("div");
+messageDiv.classList.add("message");
+
+if(msg.userId == localStorage.getItem("userId")){
+messageDiv.classList.add("sent");
+}else{
+messageDiv.classList.add("received");
+}
+
+const time = new Date(msg.createdAt).toLocaleTimeString([],{
+hour:'2-digit',
+minute:'2-digit'
+});
+
+messageDiv.innerHTML = `
+${msg.message}
+<span class="timestamp">${time}</span>
+`;
+
+chatBox.appendChild(messageDiv);
+chatBox.scrollTop = chatBox.scrollHeight;
+
+});
+
+
 async function sendMessage(){
 
 const input = document.getElementById("messageInput");
@@ -5,51 +36,37 @@ const messageText = input.value.trim();
 
 if(messageText === "") return;
 
-const chatBox = document.getElementById("chatMessages");
-
-const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-
 try{
 
 const token = localStorage.getItem("token");
 
-await fetch("http://localhost:5000/api/chat/send", {
+await fetch("http://localhost:5000/api/chat/send",{
 
-method: "POST",
+method:"POST",
 
-headers: {
-"Content-Type": "application/json",
-"Authorization": token
+headers:{
+"Content-Type":"application/json",
+"Authorization":token
 },
 
-body: JSON.stringify({
-message: messageText
+body:JSON.stringify({
+message:messageText
 })
 
 });
 
-}catch(error){
-console.log("Error sending message:", error);
+}catch(err){
+console.log(err);
 }
 
-const message = document.createElement("div");
-message.classList.add("message","sent");
-
-message.innerHTML = `
-${messageText}
-<span class="timestamp">${time}</span>
-`;
-
-chatBox.appendChild(message);
-
-chatBox.scrollTop = chatBox.scrollHeight;
-
-input.value = "";
+input.value="";
 
 }
+
+
 async function loadMessages(){
 
-const chatBox = document.getElementById("chatMessages");
+const chatBox=document.getElementById("chatMessages");
 
 try{
 
@@ -57,11 +74,11 @@ const response = await fetch("http://localhost:5000/api/chat/messages");
 
 const messages = await response.json();
 
-chatBox.innerHTML = "";
+chatBox.innerHTML="";
 
-messages.forEach(msg => {
+messages.forEach(msg=>{
 
-const messageDiv = document.createElement("div");
+const messageDiv=document.createElement("div");
 
 messageDiv.classList.add("message");
 
@@ -71,12 +88,12 @@ messageDiv.classList.add("sent");
 messageDiv.classList.add("received");
 }
 
-const time = new Date(msg.createdAt).toLocaleTimeString([], {
+const time = new Date(msg.createdAt).toLocaleTimeString([],{
 hour:'2-digit',
 minute:'2-digit'
 });
 
-messageDiv.innerHTML = `
+messageDiv.innerHTML=`
 ${msg.message}
 <span class="timestamp">${time}</span>
 `;
@@ -92,12 +109,15 @@ console.log(err);
 }
 
 }
+
 window.onload = loadMessages;
+
+
 function logout(){
 
 localStorage.removeItem("token");
 localStorage.removeItem("userId");
 
-window.location.href = "login.html";
+window.location.href="login.html";
 
 }

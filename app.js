@@ -1,42 +1,62 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const http = require("http");
 
 const sequelize = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
-const chatRoutes = require('./routes/chatRoutes');
+const chatRoutes = require("./routes/chatRoutes");
+
 const User = require("./models/user");
 const Message = require("./models/message");
 
-
-
 const app = express();
+
+/* create HTTP server */
+const server = http.createServer(app);
+
+/* socket.io setup */
+const { Server } = require("socket.io");
+const io = new Server(server,{
+  cors:{origin:"*"}
+});
+
+/* make socket available everywhere */
+app.set("io", io);
 
 app.use(cors());
 app.use(express.json());
+
 User.hasMany(Message);
 Message.belongsTo(User);
 
-/* Serve frontend */
-app.use(express.static(path.join(__dirname, "public")));
+/* serve frontend */
+app.use(express.static(path.join(__dirname,"public")));
 
-app.use("/api/auth", authRoutes);
+app.use("/api/auth",authRoutes);
+app.use("/api/chat",chatRoutes);
 
-app.use("/api/chat", chatRoutes);
+/* default route */
+app.get("/",(req,res)=>{
+  res.sendFile(path.join(__dirname,"public/signup.html"));
+});
 
-/* Default route -> open signup page */
+/* socket connection */
+io.on("connection",(socket)=>{
+  console.log("User connected:",socket.id);
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/signup.html"));
+  socket.on("disconnect",()=>{
+    console.log("User disconnected");
+  });
 });
 
 sequelize.sync()
 .then(()=>{
   console.log("Database connected");
 
-  app.listen(5000, ()=>{
+  server.listen(5000,()=>{
     console.log("Server running on port 5000");
   });
 
 })
-.catch(err => console.log(err));
+.catch(err=>console.log(err));
