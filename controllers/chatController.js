@@ -27,3 +27,20 @@ exports.sendMessage = async (req, res) => {
   }
 
 };
+exports.getMessages = async (req, res) => {
+  try {
+
+    const messages = await Message.findAll({
+      attributes: ["id", "message", "userId", "createdAt"],
+      order: [["createdAt", "ASC"]]
+    });
+
+    res.status(200).json(messages);
+
+  } catch (error) {
+
+    console.log(error);
+    res.status(500).json({ error: error.message });
+
+  }
+};
