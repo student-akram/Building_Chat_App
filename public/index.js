@@ -1,8 +1,17 @@
 const socket = io("http://localhost:5000",{
 auth:{
 token: localStorage.getItem("token")
-},
-transports:["websocket"]
+}
+});
+
+socket.on("connect",()=>{
+
+const userId = localStorage.getItem("userId");
+
+console.log("Joining room:", userId);
+
+socket.emit("join_room", userId);
+
 });
 socket.on("newMessage",(msg)=>{
 
@@ -125,3 +134,24 @@ localStorage.removeItem("userId");
 window.location.href="login.html";
 
 }
+function sendPersonalMessage(receiverId,message){
+
+socket.emit("new_message",{
+receiverId,
+message
+});
+
+}
+socket.on("personal_message",(data)=>{
+
+console.log("Received personal message:",data);
+
+const chatBox = document.getElementById("chatMessages");
+
+const div = document.createElement("div");
+
+div.innerText = `${data.senderId}: ${data.message}`;
+
+chatBox.appendChild(div);
+
+});

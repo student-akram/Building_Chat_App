@@ -71,21 +71,22 @@ if (loginForm) {
 
       const data = await response.json();
 
-      if (data.token) {
+if (data.token) {
 
-        // save token
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("userId", data.userId);
 
-        localStorage.setItem("token", data.token);
+  console.log("Saved userId:", data.userId);
 
-        alert("Login Successful");
+  alert("Login Successful");
 
-        window.location.href = "index.html";
+  window.location.href = "index.html";
 
-      } else {
+} else {
 
-        alert(data.message);
+  alert(data.message);
 
-      }
+}
 
     } catch (error) {
       console.log(error);

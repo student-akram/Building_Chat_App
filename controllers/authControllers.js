@@ -85,7 +85,8 @@ const token = jwt.sign(
 
 res.json({
 message:"Login successful",
-token
+token,
+userId: user.id
 });
 
 }catch(error){
