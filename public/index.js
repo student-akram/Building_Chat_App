@@ -42,37 +42,24 @@ chatBox.scrollTop = chatBox.scrollHeight;
 });
 
 
-async function sendMessage(){
+function sendMessage(){
 
 const input = document.getElementById("messageInput");
 const messageText = input.value.trim();
 
 if(messageText === "") return;
 
-try{
-
-const token = localStorage.getItem("token");
-
-await fetch("http://localhost:5000/api/chat/send",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json",
-"Authorization":token
-},
-
-body:JSON.stringify({
-message:messageText
-})
-
-});
-
-}catch(err){
-console.log(err);
+if(!currentRoom){
+alert("Please join a chat room first");
+return;
 }
 
-input.value="";
+socket.emit("new_message",{
+roomId: currentRoom,
+message: messageText
+});
+
+input.value = "";
 
 }
 
@@ -142,16 +129,32 @@ message
 });
 
 }
-socket.on("personal_message",(data)=>{
 
-console.log("Received personal message:",data);
+function joinRoom(){
+
+const email = document.getElementById("emailSearch").value;
+
+const myEmail = localStorage.getItem("email");
+
+const roomId = [myEmail, email].sort().join("_");
+
+currentRoom = roomId;
+
+socket.emit("join_room", roomId);
+
+console.log("Joined room:", roomId);
+
+}
+socket.on("new_message",(data)=>{
 
 const chatBox = document.getElementById("chatMessages");
 
 const div = document.createElement("div");
 
-div.innerText = `${data.senderId}: ${data.message}`;
+div.innerText = data.message;
 
 chatBox.appendChild(div);
 
 });
+
+

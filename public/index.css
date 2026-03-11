@@ -95,3 +95,39 @@ padding:5px 10px;
 cursor:pointer;
 border-radius:5px;
 }
+/* Search section */
+
+.chat-search{
+    display:flex;
+    gap:10px;
+    padding:10px;
+    background:#f5f5f5;
+    border-bottom:1px solid #ddd;
+}
+
+.chat-search input{
+    flex:1;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    font-size:14px;
+    outline:none;
+}
+
+.chat-search input:focus{
+    border-color:#2d6a5f;
+}
+
+.chat-search button{
+    background:#2d6a5f;
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.chat-search button:hover{
+    background:#1b4332;
+}

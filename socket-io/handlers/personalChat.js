@@ -1,22 +1,18 @@
-module.exports = (io, socket) => {
+module.exports = (io, socket)=>{
 
-socket.on("join_room",(userId)=>{
+socket.on("join_room",(roomId)=>{
 
-const room = `user_${userId}`;
+socket.join(roomId);
 
-socket.join(room);
-
-console.log(`User ${userId} joined ${room}`);
+console.log(`User joined room ${roomId}`);
 
 });
 
 socket.on("new_message",(data)=>{
 
-const {receiverId,message} = data;
+const {roomId,message} = data;
 
-const room = `user_${receiverId}`;
-
-io.to(room).emit("personal_message",{
+io.to(roomId).emit("new_message",{
 message,
 senderId: socket.user.id
 });

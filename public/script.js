@@ -75,7 +75,7 @@ if (data.token) {
 
   localStorage.setItem("token", data.token);
   localStorage.setItem("userId", data.userId);
-
+  localStorage.setItem("email", loginInput);
   console.log("Saved userId:", data.userId);
 
   alert("Login Successful");
