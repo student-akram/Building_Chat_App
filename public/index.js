@@ -45,21 +45,22 @@ chatBox.scrollTop = chatBox.scrollHeight;
 function sendMessage(){
 
 const input = document.getElementById("messageInput");
-const messageText = input.value.trim();
 
-if(messageText === "") return;
+const message = input.value.trim();
+
+if(message === "") return;
 
 if(!currentRoom){
-alert("Please join a chat room first");
+alert("Start chat first");
 return;
 }
 
 socket.emit("new_message",{
 roomId: currentRoom,
-message: messageText
+message: message
 });
 
-input.value = "";
+input.value="";
 
 }
 
@@ -130,19 +131,43 @@ message
 
 }
 
-function joinRoom(){
+let currentRoom = null;
 
-const email = document.getElementById("emailSearch").value;
+async function joinRoom(){
+
+const email = document.getElementById("emailSearch").value.trim();
+
+if(!email){
+alert("Enter email");
+return;
+}
 
 const myEmail = localStorage.getItem("email");
 
-const roomId = [myEmail, email].sort().join("_");
+try{
+
+// verify email exists
+const res = await fetch(`http://localhost:5000/api/users/check-user/${email}`);
+
+const data = await res.json();
+
+if(!data.exists){
+alert("User not found");
+return;
+}
+
+// generate room ID
+const roomId = [myEmail,email].sort().join("_");
 
 currentRoom = roomId;
 
 socket.emit("join_room", roomId);
 
-console.log("Joined room:", roomId);
+console.log("Joined room:",roomId);
+
+}catch(err){
+console.log(err);
+}
 
 }
 socket.on("new_message",(data)=>{
