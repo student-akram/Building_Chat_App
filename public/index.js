@@ -48,15 +48,10 @@ const input = document.getElementById("messageInput");
 
 const message = input.value.trim();
 
-if(message === "") return;
+if(message==="") return;
 
-if(!currentRoom){
-alert("Start chat first");
-return;
-}
-
-socket.emit("new_message",{
-roomId: currentRoom,
+socket.emit("group_message",{
+groupName: currentRoom,
 message: message
 });
 
@@ -170,7 +165,40 @@ console.log(err);
 }
 
 }
+function createGroup(){
+
+const groupName = document.getElementById("groupName").value;
+
+socket.emit("create_group", groupName);
+
+currentRoom = groupName;
+
+console.log("Group created:", groupName);
+
+}
+function joinGroup(){
+
+const groupName = document.getElementById("groupName").value;
+
+socket.emit("join_group", groupName);
+
+currentRoom = groupName;
+
+console.log("Joined group:", groupName);
+
+}
 socket.on("new_message",(data)=>{
+
+const chatBox = document.getElementById("chatMessages");
+
+const div = document.createElement("div");
+
+div.innerText = data.message;
+
+chatBox.appendChild(div);
+
+});
+socket.on("group_message",(data)=>{
 
 const chatBox = document.getElementById("chatMessages");
 
