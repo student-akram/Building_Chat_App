@@ -2,57 +2,54 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Window</title>
-
-    <link rel="stylesheet" href="index.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Window</title>
+<link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-    <div class="chat-container">
 
-        <div class="chat-header">
-            Chat Room
-            <button onclick="logout()" class="logout-btn">Logout</button>
-        </div>
-        <div class="chat-search">
-            <input type="text" id="emailSearch" placeholder="Search user email...">
-            <button onclick="joinRoom()">Start Chat</button>
-        </div>
-        <div class="group-section">
+<div class="chat-container">
 
-            <input type="text" id="groupName" placeholder="Enter group name">
-
-            <button onclick="createGroup()">Create Group</button>
-
-            <button onclick="joinGroup()">Join Group</button>
-
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <div class="message received">
-                Hello Akram 👋
-                <span class="timestamp">10:30 AM</span>
-            </div>
-
-            <div class="message sent">
-                Hi! How are you?
-                <span class="timestamp">10:31 AM</span>
-            </div>
-
-        </div>
-
-        <div class="chat-input">
-
-            <input type="text" id="messageInput" placeholder="Type a message...">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-
+    <div class="chat-header">
+        Chat Room
+        <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="index.js"></script>
+    <!-- SEARCH USER -->
+    <div class="search-bar">
+        <input type="text" id="emailSearch" placeholder="Search user email...">
+        <button onclick="joinRoom()">Start Chat</button>
+    </div>
+
+    <!-- GROUP SECTION -->
+    <div class="group-bar">
+        <input type="text" id="groupName" placeholder="Enter group name">
+        <button onclick="createGroup()">Create Group</button>
+        <button onclick="joinGroup()">Join Group</button>
+    </div>
+
+    <!-- CHAT MESSAGES -->
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <!-- FILE UPLOAD -->
+    <div class="file-upload">
+        Select file:
+        <input type="file" id="mediaInput" title="Select a file to upload">
+        <button onclick="sendMedia()">Send File</button>
+    </div>
+
+    <!-- MESSAGE INPUT -->
+    <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="index.js"></script>
 
 </body>
-
 </html>

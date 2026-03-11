@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -7,6 +8,12 @@ const sequelize = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const userRoutes = require("./routes/userRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
+const mediaRoutes = require("./routes/mediaRoutes");
+
+
+
+
 
 
 const User = require("./models/user");
@@ -28,6 +35,8 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use("/api/auth",authRoutes);
 app.use("/api/chat",chatRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/media", mediaRoutes);
 
 app.get("/",(req,res)=>{
 res.sendFile(path.join(__dirname,"public/signup.html"));

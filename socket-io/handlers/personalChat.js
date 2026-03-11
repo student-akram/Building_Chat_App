@@ -9,8 +9,8 @@ console.log(`User joined room ${roomId}`);
 });
 
 socket.on("new_message",(data)=>{
-
-const {roomId,message} = data;
+console.log("Message received on server:", data);
+const { roomId, message } = data;
 
 io.to(roomId).emit("new_message",{
 message,
