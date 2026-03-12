@@ -1,20 +1,29 @@
-const Message = require('../models/message');
+const Message = require("../models/message");
 
 exports.sendMessage = async (req,res)=>{
 
 try{
 
-const {message}=req.body;
-const userId=req.user.id;
+const {message,roomId} = req.body;
+const senderId = req.user.id;
 
-const newMessage=await Message.create({
+if(!roomId){
+return res.status(400).json({error:"RoomId missing"});
+}
+
+const newMessage = await Message.create({
 message,
-userId
+roomId,
+senderId
 });
 
-const io=req.app.get("io");
+const io = req.app.get("io");
 
-io.emit("newMessage",newMessage);
+io.to(roomId).emit("new_message",{
+message,
+senderId,
+roomId
+});
 
 res.status(201).json(newMessage);
 
@@ -26,20 +35,25 @@ res.status(500).json({error:err.message});
 }
 
 };
-exports.getMessages = async (req, res) => {
-  try {
 
-    const messages = await Message.findAll({
-      attributes: ["id", "message", "userId", "createdAt"],
-      order: [["createdAt", "ASC"]]
-    });
+exports.getMessages = async (req,res)=>{
 
-    res.status(200).json(messages);
+try{
 
-  } catch (error) {
+const {roomId} = req.query;
 
-    console.log(error);
-    res.status(500).json({ error: error.message });
+const messages = await Message.findAll({
+where:{roomId},
+order:[["createdAt","ASC"]]
+});
 
-  }
+res.json(messages);
+
+}catch(err){
+
+console.log(err);
+res.status(500).json({error:err.message});
+
+}
+
 };

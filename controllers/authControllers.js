@@ -77,6 +77,8 @@ return res.json({message:"Invalid password"});
 
 // create JWT token
 
+// LOGIN SUCCESS
+
 const token = jwt.sign(
 { id:user.id },
 "secretkey",
@@ -84,11 +86,10 @@ const token = jwt.sign(
 );
 
 res.json({
-message:"Login successful",
-token,
-userId: user.id
+token: token,
+userId: user.id,
+email: user.email
 });
-
 }catch(error){
 
 res.status(500).json({error:error.message});

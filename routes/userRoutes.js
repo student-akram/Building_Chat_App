@@ -2,24 +2,32 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 
-router.get("/check-user/:email", async (req,res)=>{
+router.get("/check-user/:email", async (req, res) => {
+  try {
 
-try{
+    const email = req.params.email.trim().toLowerCase();
 
-const email = req.params.email;
+    console.log("Searching for email:", email);
 
-const user = await User.findOne({ where:{ email } });
+    const user = await User.findOne({
+      where: { email: email }
+    });
 
-if(user){
-return res.json({exists:true});
-}
+    if (!user) {
+      return res.json({ exists: false });
+    }
 
-res.json({exists:false});
+    console.log("Found user:", user.email, "ID:", user.id);
 
-}catch(err){
-res.status(500).json({error:err.message});
-}
+    res.json({
+      exists: true,
+      userId: user.id
+    });
 
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

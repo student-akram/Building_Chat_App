@@ -1,97 +1,106 @@
-// SIGNUP FORM
+/* =========================
+   SIGNUP
+========================= */
 
 const signupForm = document.querySelector("#signupForm");
 
 if (signupForm) {
-  signupForm.addEventListener("submit", async (e) => {
 
-    e.preventDefault();
+signupForm.addEventListener("submit", async (e)=>{
 
-    const name = document.querySelector("#name").value;
-    const email = document.querySelector("#email").value;
-    const phone = document.querySelector("#phone").value;
-    const password = document.querySelector("#password").value;
+e.preventDefault();
 
-    try {
+const name = document.querySelector("#name").value.trim();
+const email = document.querySelector("#email").value.trim();
+const phone = document.querySelector("#phone").value.trim();
+const password = document.querySelector("#password").value.trim();
 
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          phone,
-          password
-        })
-      });
+try{
 
-      const data = await response.json();
+const response = await fetch("http://localhost:5000/api/auth/signup",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+name,email,phone,password
+})
+});
 
-      alert(data.message);
+const data = await response.json();
 
-      if (data.message === "Signup successful") {
-        window.location.href = "login.html";
-      }
+alert(data.message);
 
-    } catch (error) {
-      console.log(error);
-    }
+if(data.message === "Signup successful"){
+window.location.href="login.html";
+}
 
-  });
+}catch(err){
+console.log(err);
+}
+
+});
+
 }
 
 
-// LOGIN FORM
+/* =========================
+   LOGIN
+========================= */
 
 const loginForm = document.querySelector("#loginForm");
 
-if (loginForm) {
+if(loginForm){
 
-  loginForm.addEventListener("submit", async (e) => {
+loginForm.addEventListener("submit", async (e)=>{
 
-    e.preventDefault();
+e.preventDefault();
 
-    const loginInput = document.querySelector("#loginInput").value;
-    const password = document.querySelector("#loginPassword").value;
+const loginInput = document.getElementById("loginInput").value.trim();
+const password = document.getElementById("loginPassword").value.trim();
 
-    try {
+try{
 
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          loginInput,
-          password
-        })
-      });
+const res = await fetch("http://localhost:5000/api/auth/login",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+loginInput,
+password
+})
+});
 
-      const data = await response.json();
+const data = await res.json();
 
-if (data.token) {
+if(data.token){
 
-  localStorage.setItem("token", data.token);
-  localStorage.setItem("userId", data.userId);
-  localStorage.setItem("email", loginInput);
-  console.log("Saved userId:", data.userId);
+/* CLEAR OLD STORAGE */
 
-  alert("Login Successful");
+localStorage.clear();
 
-  window.location.href = "index.html";
+/* SAVE NEW LOGIN DATA */
 
-} else {
+localStorage.setItem("token", data.token);
+localStorage.setItem("userId", data.userId);
+localStorage.setItem("email", data.email);
 
-  alert(data.message);
+console.log("Logged userId:", data.userId);
+console.log("Logged email:", data.email);
 
+alert("Login Successful");
+
+window.location.href="index.html";
+
+}else{
+alert(data.message);
 }
 
-    } catch (error) {
-      console.log(error);
-    }
+}catch(err){
+console.log(err);
+}
 
-  });
+});
 
 }

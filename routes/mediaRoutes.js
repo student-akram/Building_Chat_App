@@ -19,7 +19,7 @@ const s3 = new AWS.S3({
 });
 
 
-router.post("/upload", upload.single("media"), async (req,res)=>{
+router.post("/upload", upload.single("file"), async (req,res)=>{
     console.log("AWS_REGION:", process.env.AWS_REGION);
 console.log("BUCKET:", process.env.S3_BUCKET);
 
