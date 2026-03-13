@@ -98,21 +98,23 @@ button:hover{
 /* MESSAGE */
 
 .message{
-    max-width:70%;
-    padding:10px;
-    border-radius:10px;
+max-width:70%;
+margin:6px;
+padding:8px;
+border-radius:10px;
 }
 
 .sent{
-    align-self:flex-end;
-    background:#dcf8c6;
+background:#dcf8c6;
+margin-left:auto;
+text-align:right;
 }
 
 .received{
-    align-self:flex-start;
-    background:#f1f0f0;
+background:#ffffff;
+margin-right:auto;
+text-align:left;
 }
-
 .timestamp{
     font-size:10px;
     display:block;
@@ -142,4 +144,13 @@ button:hover{
 
 .chat-input button{
     padding:10px 16px;
+}
+.message img{
+max-width:200px;
+border-radius:10px;
+display:block;
+}
+#chatMessages{
+display:flex;
+flex-direction:column;
 }

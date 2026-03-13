@@ -8,8 +8,9 @@ input.placeholder = "Enter user email to chat";
 }
 
 });
+
 if(!localStorage.getItem("token")){
-    window.location.href = "login.html";
+window.location.href = "login.html";
 }
 
 const myEmail = localStorage.getItem("email");
@@ -17,7 +18,6 @@ const myId = Number(localStorage.getItem("userId"));
 
 console.log("Logged user:", myEmail);
 console.log("User ID:", myId);
-
 
 const socket = io("http://localhost:5000", {
 auth:{
@@ -39,49 +39,65 @@ console.log("Rejoining room:", currentRoom);
 }
 
 });
+
 /* OLD MESSAGES */
 
 socket.on("previous_messages",(messages)=>{
 
 const chatBox = document.getElementById("chatMessages");
-
 chatBox.innerHTML="";
 
 messages.forEach(msg=>{
 
 const div = document.createElement("div");
-div.classList.add("message");
 
-if(msg.userId == localStorage.getItem("userId")){
-div.classList.add("sent");
+const sender = Number(msg.senderId);
+
+if(sender === myId){
+div.className = "message sent";
 }else{
-div.classList.add("received");
+div.className = "message received";
 }
 
-div.innerText = msg.message;
+if(msg.message.startsWith("http")){
+div.innerHTML = `
+<a href="${msg.message}" target="_blank">
+<img src="${msg.message}" class="chat-image">
+</a>
+`;
+}else{
+div.textContent = msg.message;
+}
 
 chatBox.appendChild(div);
 
 });
 
+chatBox.scrollTop = chatBox.scrollHeight;
+
 });
+/* scroll bottom */
+
+
+
+
 
 /* RECEIVE PERSONAL MESSAGE */
 
 socket.on("new_message",(data)=>{
 
 const chatBox = document.getElementById("chatMessages");
-
 const div = document.createElement("div");
-div.classList.add("message");
 
-if(data.senderId == localStorage.getItem("userId")){
-div.classList.add("sent");
+const sender = Number(data.senderId);
+
+if(sender === myId){
+div.className = "message sent";
 }else{
-div.classList.add("received");
+div.className = "message received";
 }
 
-div.innerText = data.message;
+div.textContent = data.message;
 
 chatBox.appendChild(div);
 chatBox.scrollTop = chatBox.scrollHeight;
@@ -97,7 +113,7 @@ const chatBox = document.getElementById("chatMessages");
 const div = document.createElement("div");
 div.classList.add("message");
 
-if(data.senderId == localStorage.getItem("userId")){
+if(data.senderId === Number(localStorage.getItem("userId"))){
 div.classList.add("sent");
 }else{
 div.classList.add("received");
@@ -110,26 +126,29 @@ chatBox.appendChild(div);
 });
 
 /* RECEIVE MEDIA */
-
 socket.on("media_message",(data)=>{
 
 const chatBox = document.getElementById("chatMessages");
-
 const div = document.createElement("div");
-div.classList.add("message");
+
+const sender = Number(data.senderId);
+
+if(sender === myId){
+div.className = "message sent";
+}else{
+div.className = "message received";
+}
 
 div.innerHTML = `
 <a href="${data.url}" target="_blank">
-<img src="${data.url}" width="200"/>
+<img src="${data.url}" class="chat-image">
 </a>
 `;
 
 chatBox.appendChild(div);
+chatBox.scrollTop = chatBox.scrollHeight;
 
 });
-
-/* START PERSONAL CHAT */
-
 /* START PERSONAL CHAT */
 
 async function joinRoom(){
@@ -151,8 +170,6 @@ alert("User not found");
 return;
 }
 
-/* convert IDs to numbers */
-
 const myId = Number(localStorage.getItem("userId"));
 const friendId = Number(data.userId);
 
@@ -163,7 +180,7 @@ alert("You cannot chat with yourself");
 return;
 }
 
-/* always create SAME room for both users */
+/* SAME ROOM FOR BOTH USERS */
 
 const roomId = myId < friendId
 ? `${myId}_${friendId}`
@@ -175,8 +192,6 @@ console.log("My ID:", myId);
 console.log("Friend ID:", friendId);
 console.log("Joining room:", roomId);
 
-/* JOIN ROOM */
-
 socket.emit("join_room", roomId);
 
 }catch(err){
@@ -184,6 +199,7 @@ console.log(err);
 }
 
 }
+
 /* SEND MESSAGE */
 
 function sendMessage(){
@@ -197,8 +213,6 @@ if(!currentRoom){
 alert("Start chat first");
 return;
 }
-
-/* send to server */
 
 socket.emit("new_message",{
 roomId: currentRoom,
@@ -245,7 +259,6 @@ return;
 }
 
 const formData = new FormData();
-
 formData.append("file",file);
 
 const res = await fetch("http://localhost:5000/api/media/upload",{
@@ -257,10 +270,13 @@ const data = await res.json();
 
 socket.emit("media_message",{
 roomId: currentRoom,
-url:data.url
+url:data.url,
+senderId: Number(localStorage.getItem("userId"))
 });
 
 }
+
+/* LOGOUT */
 
 function logout(){
 

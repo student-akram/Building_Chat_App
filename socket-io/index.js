@@ -111,14 +111,31 @@ senderId:socket.user.id
 
 /* MEDIA MESSAGE */
 
-socket.on("media_message",(data)=>{
+socket.on("media_message", async(data)=>{
+
+try{
 
 const {roomId,url} = data;
 
-io.to(roomId).emit("media_message",{
-url,
-senderId:socket.user.id
+/* SAVE IMAGE LIKE NORMAL MESSAGE */
+
+const saved = await Message.create({
+message: url,
+roomId,
+senderId: socket.user.id
 });
+
+/* SEND TO ROOM */
+
+io.to(roomId).emit("media_message",{
+url: saved.message,
+senderId: socket.user.id,
+createdAt: saved.createdAt
+});
+
+}catch(err){
+console.log(err);
+}
 
 });
 
