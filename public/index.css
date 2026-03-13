@@ -98,23 +98,27 @@ button:hover{
 /* MESSAGE */
 
 .message{
-max-width:70%;
-margin:6px;
-padding:8px;
-border-radius:10px;
+max-width:65%;
+padding:10px 14px;
+margin:6px 0;
+border-radius:12px;
+word-wrap:break-word;
+font-size:15px;
 }
 
 .sent{
 background:#dcf8c6;
-margin-left:auto;
-text-align:right;
+align-self:flex-end;
+border-bottom-right-radius:3px;
 }
 
 .received{
 background:#ffffff;
-margin-right:auto;
-text-align:left;
+align-self:flex-start;
+border-bottom-left-radius:3px;
+border:1px solid #e5e5e5;
 }
+
 .timestamp{
     font-size:10px;
     display:block;
@@ -153,4 +157,10 @@ display:block;
 #chatMessages{
 display:flex;
 flex-direction:column;
+padding:10px;
+}
+.chat-image{
+max-width:220px;
+border-radius:10px;
+display:block;
 }
