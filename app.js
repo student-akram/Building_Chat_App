@@ -16,8 +16,14 @@ const mediaRoutes = require("./routes/mediaRoutes");
 
 
 
+
 const User = require("./models/user");
 const Message = require("./models/message");
+const ArchivedMessage = require("./models/archivedMessage");
+
+
+/* start archive cron job */
+require("./jobs/archieveMessages");
 
 const initSocket = require("./socket-io");
 
