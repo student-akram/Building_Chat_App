@@ -101,6 +101,33 @@ div.textContent = data.message;
 
 chatBox.appendChild(div);
 chatBox.scrollTop = chatBox.scrollHeight;
+fetch("/api/ai/reply",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({message:data.message})
+})
+.then(res=>res.json())
+.then(data=>{
+
+const replyBox = document.getElementById("suggestions");
+
+replyBox.innerHTML="";
+
+data.replies.forEach(r=>{
+
+const btn = document.createElement("button");
+
+btn.innerText = r;
+
+btn.onclick = ()=>{
+document.getElementById("messageInput").value = r;
+};
+
+replyBox.appendChild(btn);
+
+});
+
+});
 
 });
 
@@ -172,12 +199,13 @@ return;
 
 const myId = Number(localStorage.getItem("userId"));
 const friendId = Number(data.userId);
+console.log("My ID:", myId, "Friend ID:", friendId);
 
-/* prevent self chat */
+/* FINAL SELF CHAT CHECK */
 
-if(myId === friendId){
-alert("You cannot chat with yourself");
-return;
+if(String(myId) === String(friendId)){
+    alert("You cannot chat with yourself");
+    return;
 }
 
 /* SAME ROOM FOR BOTH USERS */
@@ -287,3 +315,37 @@ localStorage.removeItem("userId");
 window.location.href = "login.html";
 
 }
+const input = document.getElementById("messageInput");
+const suggestionBox = document.getElementById("suggestions");
+
+input.addEventListener("input", async ()=>{
+
+const text = input.value;
+
+if(text.length < 3) return;
+
+const res = await fetch("/api/ai/suggest",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({text})
+});
+
+const data = await res.json();
+
+suggestionBox.innerHTML="";
+
+data.suggestions.forEach(s=>{
+
+const btn = document.createElement("button");
+
+btn.innerText = s;
+
+btn.onclick = ()=>{
+input.value = s;
+};
+
+suggestionBox.appendChild(btn);
+
+});
+
+});

@@ -10,6 +10,7 @@ const chatRoutes = require("./routes/chatRoutes");
 const userRoutes = require("./routes/userRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 
 
@@ -43,6 +44,7 @@ app.use("/api/chat",chatRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/media", mediaRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.get("/",(req,res)=>{
 res.sendFile(path.join(__dirname,"public/signup.html"));
