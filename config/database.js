@@ -1,12 +1,22 @@
 const { Sequelize } = require("sequelize");
 
 const sequelize = new Sequelize(
-  "chatapp_db",     // database name
-  "root",           // mysql username
-  "root",       // mysql password
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
   {
-    host: "localhost",
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     dialect: "mysql",
+
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    },
+
+    logging: false
   }
 );
 

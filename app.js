@@ -8,7 +8,6 @@ const sequelize = require("./config/database");
 const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const userRoutes = require("./routes/userRoutes");
-const uploadRoutes = require("./routes/uploadRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 
@@ -42,7 +41,7 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use("/api/auth",authRoutes);
 app.use("/api/chat",chatRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/upload", uploadRoutes);
+
 app.use("/api/media", mediaRoutes);
 app.use("/api/ai", aiRoutes);
 
@@ -58,8 +57,10 @@ const io = initSocket(server);
 
 app.set("io", io);
 
-server.listen(5000,()=>{
-console.log("Server running on port 5000");
+const PORT = process.env.PORT || 5000;
+
+server.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
 });
 
 });

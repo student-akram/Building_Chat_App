@@ -1,99 +1,169 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
 
-
+// =========================
 // SIGNUP
+// =========================
 
-exports.signup = async (req,res)=>{
+exports.signup = async (req, res) => {
 
-try{
+    try {
 
-const {name,email,phone,password} = req.body;
+        let { name, email, phone, password } = req.body;
 
-// check existing user
+        // Remove unnecessary spaces
+        name = name?.trim();
+        email = email?.trim().toLowerCase();
+        phone = phone?.trim();
+        password = password?.trim();
 
-const existingUser = await User.findOne({where:{email}});
+        // Basic validation
+        if (!name || !email || !phone || !password) {
+            return res.status(400).json({
+                message: "All fields are required"
+            });
+        }
 
-if(existingUser){
-return res.json({message:"User already exists"});
-}
+        // Check if email already exists
+        const existingEmail = await User.findOne({
+            where: {
+                email: email
+            }
+        });
 
-// encrypt password
+        if (existingEmail) {
+            return res.status(409).json({
+                message: "Email already registered"
+            });
+        }
 
-const hashedPassword = await bcrypt.hash(password,10);
+        // Check if phone already exists
+        const existingPhone = await User.findOne({
+            where: {
+                phone: phone
+            }
+        });
 
-// create user
+        if (existingPhone) {
+            return res.status(409).json({
+                message: "Phone number already registered"
+            });
+        }
 
-await User.create({
-name,
-email,
-phone,
-password:hashedPassword
-});
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-res.json({message:"Signup successful"});
+        // Create user
+        const user = await User.create({
+            name,
+            email,
+            phone,
+            password: hashedPassword
+        });
 
-}catch(error){
+        console.log("New user created:", {
+            id: user.id,
+            email: user.email
+        });
 
-res.status(500).json({error:error.message});
+        return res.status(201).json({
+            message: "Signup successful"
+        });
 
-}
+    } catch (error) {
 
+        console.error("Signup error:", error);
+
+        return res.status(500).json({
+            message: "Signup failed",
+            error: error.message
+        });
+    }
 };
 
 
-
+// =========================
 // LOGIN
+// =========================
 
-exports.login = async (req,res)=>{
+exports.login = async (req, res) => {
 
-try{
+    try {
 
-const {loginInput,password} = req.body;
+        let { loginInput, password } = req.body;
 
-// find user by email OR phone
+        loginInput = loginInput?.trim();
+        password = password?.trim();
 
-const user = await User.findOne({
-where:{
-[require("sequelize").Op.or]:[
-{email:loginInput},
-{phone:loginInput}
-]
-}
-});
+        if (!loginInput || !password) {
+            return res.status(400).json({
+                message: "Login details are required"
+            });
+        }
 
-if(!user){
-return res.json({message:"User not found"});
-}
+        // Normalize email if login input looks like an email
+        const normalizedLoginInput = loginInput.toLowerCase();
 
-// compare password
+        // Find user using email OR phone
+        const user = await User.findOne({
+            where: {
+                [Op.or]: [
+                    {
+                        email: normalizedLoginInput
+                    },
+                    {
+                        phone: loginInput
+                    }
+                ]
+            }
+        });
 
-const isMatch = await bcrypt.compare(password,user.password);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
 
-if(!isMatch){
-return res.json({message:"Invalid password"});
-}
+        // Check password
+        const isMatch = await bcrypt.compare(
+            password,
+            user.password
+        );
 
-// create JWT token
+        if (!isMatch) {
+            return res.status(401).json({
+                message: "Invalid password"
+            });
+        }
 
-// LOGIN SUCCESS
+        // Generate JWT
+        const token = jwt.sign(
+            {
+                id: user.id
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "1d"
+            }
+        );
 
-const token = jwt.sign(
-{ id:user.id },
-"secretkey",
-{ expiresIn:"1d" }
-);
+        console.log("Login successful:", user.email);
 
-res.json({
-token: token,
-userId: user.id,
-email: user.email
-});
-}catch(error){
+        return res.json({
+            token,
+            userId: user.id,
+            email: user.email
+        });
 
-res.status(500).json({error:error.message});
+    } catch (error) {
 
-}
+        console.error("Login error:", error);
 
+        return res.status(500).json({
+            message: "Login failed",
+            error: error.message
+        });
+    }
 };

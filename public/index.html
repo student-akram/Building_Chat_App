@@ -2,56 +2,315 @@
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat Window</title>
-<link rel="stylesheet" href="index.css">
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ChatApp</title>
+
+    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
 
-<div class="chat-container">
+    <div class="app">
 
-    <div class="chat-header">
-        Chat Room
-        <button onclick="logout()" class="logout-btn">Logout</button>
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <header class="app-header">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    💬
+                </div>
+
+                <div>
+                    <h1>ChatApp</h1>
+                    <span>Real-time messaging</span>
+                </div>
+
+            </div>
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+                <span>↪</span>
+                Logout
+            </button>
+
+        </header>
+
+
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+
+        <main class="chat-layout">
+
+
+            <!-- =========================
+                 SIDEBAR
+            ========================== -->
+
+            <aside class="sidebar">
+
+
+                <!-- PERSONAL CHAT -->
+
+                <section class="panel">
+
+                    <div class="panel-title">
+
+                        <div class="panel-icon">
+                            👤
+                        </div>
+
+                        <div>
+                            <h2>Start a Chat</h2>
+                            <p>Chat with another user</p>
+                        </div>
+
+                    </div>
+
+
+                    <label for="emailSearch">
+                        User email
+                    </label>
+
+                    <div class="search-input">
+
+                        <input
+                            type="email"
+                            id="emailSearch"
+                            placeholder="Enter user's email"
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+
+                    <button
+                        class="primary-btn"
+                        onclick="joinRoom()"
+                    >
+                        <span>💬</span>
+                        Start Chat
+                    </button>
+
+                </section>
+
+
+                <!-- GROUP CHAT -->
+
+                <section class="panel">
+
+                    <div class="panel-title">
+
+                        <div class="panel-icon">
+                            👥
+                        </div>
+
+                        <div>
+                            <h2>Group Chat</h2>
+                            <p>Create or join a room</p>
+                        </div>
+
+                    </div>
+
+
+                    <label for="groupName">
+                        Group name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="groupName"
+                        placeholder="Enter group name"
+                        autocomplete="off"
+                    >
+
+
+                    <div class="group-buttons">
+
+                        <button
+                            class="secondary-btn"
+                            onclick="createGroup()"
+                        >
+                            Create
+                        </button>
+
+                        <button
+                            class="secondary-btn"
+                            onclick="joinGroup()"
+                        >
+                            Join
+                        </button>
+
+                    </div>
+
+                </section>
+
+
+                <!-- INFO -->
+
+                <div class="sidebar-info">
+
+                    <span class="status-dot"></span>
+
+                    <div>
+                        <strong>Secure connection</strong>
+                        <p>Messages are sent in real time.</p>
+                    </div>
+
+                </div>
+
+            </aside>
+
+
+            <!-- =========================
+                 CHAT AREA
+            ========================== -->
+
+            <section class="chat-panel">
+
+
+                <!-- CHAT HEADER -->
+
+                <div class="chat-topbar">
+
+                    <div class="chat-user">
+
+                        <div class="avatar">
+                            💬
+                        </div>
+
+                        <div>
+
+                            <h2>Chat Room</h2>
+
+                            <p>
+                                <span class="online-dot"></span>
+                                Connected
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     MESSAGES
+                ========================== -->
+
+                <div
+                    class="chat-messages"
+                    id="chatMessages"
+                >
+
+                    <div class="empty-chat">
+
+                        <div class="empty-icon">
+                            💬
+                        </div>
+
+                        <h3>Welcome to ChatApp</h3>
+
+                        <p>
+                            Enter a user's email to start
+                            a conversation.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     AI SUGGESTIONS
+                ========================== -->
+
+                <div
+                    class="suggestions"
+                    id="suggestions"
+                ></div>
+
+
+                <!-- =========================
+                     FILE UPLOAD
+                ========================== -->
+
+                <div class="file-area">
+
+                    <label
+                        class="file-label"
+                        for="mediaInput"
+                    >
+                        📎
+                        <span>Select file</span>
+                    </label>
+
+                    <input
+                        type="file"
+                        id="mediaInput"
+                    >
+
+                    <button
+                        class="file-btn"
+                        onclick="sendMedia()"
+                    >
+                        Send File
+                    </button>
+
+                </div>
+
+
+                <!-- =========================
+                     MESSAGE INPUT
+                ========================== -->
+
+                <div class="message-area">
+
+                    <input
+                        type="text"
+                        id="messageInput"
+                        placeholder="Type a message..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        class="send-btn"
+                        onclick="sendMessage()"
+                        aria-label="Send message"
+                    >
+                        ➤
+                    </button>
+
+                </div>
+
+            </section>
+
+        </main>
+
     </div>
 
-    <!-- SEARCH USER -->
-    <div class="search-bar">
-        <input type="text" id="emailSearch" placeholder="Enter friend's email">
-/>
-        <button onclick="joinRoom()">Start Chat</button>
-    </div>
 
-    <!-- GROUP SECTION -->
-    <div class="group-bar">
-        <input type="text" id="groupName" placeholder="Enter group name">
-        <button onclick="createGroup()">Create Group</button>
-        <button onclick="joinGroup()">Join Group</button>
-    </div>
+    <!-- SOCKET.IO -->
 
-    <!-- CHAT MESSAGES -->
-    <div class="chat-messages" id="chatMessages"></div>
-    <div id="suggestions"></div>
+    <script src="/socket.io/socket.io.js"></script>
 
-    <!-- FILE UPLOAD -->
-    <div class="file-upload">
-        Select file:
-        <input type="file" id="mediaInput" title="Select a file to upload">
-        <button onclick="sendMedia()">Send File</button>
-    </div>
+    <!-- APPLICATION JS -->
 
-    <!-- MESSAGE INPUT -->
-    <div class="chat-input">
-        <input type="text" id="messageInput" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
-    </div>
-
-</div>
-
-<script src="/socket.io/socket.io.js"></script>
-<script src="index.js"></script>
+    <script src="index.js"></script>
 
 </body>
+
 </html>

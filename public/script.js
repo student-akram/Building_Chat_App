@@ -6,40 +6,61 @@ const signupForm = document.querySelector("#signupForm");
 
 if (signupForm) {
 
-signupForm.addEventListener("submit", async (e)=>{
+    signupForm.addEventListener("submit", async (e) => {
 
-e.preventDefault();
+        e.preventDefault();
 
-const name = document.querySelector("#name").value.trim();
-const email = document.querySelector("#email").value.trim();
-const phone = document.querySelector("#phone").value.trim();
-const password = document.querySelector("#password").value.trim();
+        const name = document.querySelector("#name").value.trim();
+        const email = document.querySelector("#email").value.trim().toLowerCase();
+        const phone = document.querySelector("#phone").value.trim();
+        const password = document.querySelector("#password").value.trim();
 
-try{
+        try {
 
-const response = await fetch("http://localhost:5000/api/auth/signup",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-name,email,phone,password
-})
-});
+            const response = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    phone,
+                    password
+                })
+            });
 
-const data = await response.json();
+            const data = await response.json();
 
-alert(data.message);
+            if (response.ok) {
 
-if(data.message === "Signup successful"){
-window.location.href="login.html";
-}
+                alert(data.message);
 
-}catch(err){
-console.log(err);
-}
+                if (data.message === "Signup successful") {
+                    window.location.href = "login.html";
+                }
 
-});
+            } else {
+
+                alert(
+                    data.error ||
+                    data.message ||
+                    "Signup failed"
+                );
+
+            }
+
+        } catch (err) {
+
+            console.error("Signup error:", err);
+
+            alert(
+                "Unable to connect to the server. Please try again."
+            );
+
+        }
+
+    });
 
 }
 
@@ -50,57 +71,102 @@ console.log(err);
 
 const loginForm = document.querySelector("#loginForm");
 
-if(loginForm){
+if (loginForm) {
 
-loginForm.addEventListener("submit", async (e)=>{
+    loginForm.addEventListener("submit", async (e) => {
 
-e.preventDefault();
+        e.preventDefault();
 
-const loginInput = document.getElementById("loginInput").value.trim();
-const password = document.getElementById("loginPassword").value.trim();
+        const loginInput = document
+            .getElementById("loginInput")
+            .value
+            .trim()
+            .toLowerCase();
 
-try{
+        const password = document
+            .getElementById("loginPassword")
+            .value
+            .trim();
 
-const res = await fetch("http://localhost:5000/api/auth/login",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-loginInput,
-password
-})
-});
+        try {
 
-const data = await res.json();
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    loginInput,
+                    password
+                })
+            });
 
-if(data.token){
+            const data = await res.json();
 
-/* CLEAR OLD STORAGE */
+            if (data.token) {
 
-localStorage.clear();
+                /* =========================
+                   CLEAR OLD SESSION
+                ========================= */
 
-/* SAVE NEW LOGIN DATA */
+                sessionStorage.clear();
 
-localStorage.setItem("token", data.token);
-localStorage.setItem("userId", data.userId);
-localStorage.setItem("email", data.email);
 
-console.log("Logged userId:", data.userId);
-console.log("Logged email:", data.email);
+                /* =========================
+                   SAVE LOGIN DATA
+                ========================= */
 
-alert("Login Successful");
+                sessionStorage.setItem(
+                    "token",
+                    data.token
+                );
 
-window.location.href="index.html";
+                sessionStorage.setItem(
+                    "userId",
+                    data.userId
+                );
 
-}else{
-alert(data.message);
-}
+                sessionStorage.setItem(
+                    "email",
+                    data.email
+                );
 
-}catch(err){
-console.log(err);
-}
 
-});
+                console.log(
+                    "Logged userId:",
+                    data.userId
+                );
+
+                console.log(
+                    "Logged email:",
+                    data.email
+                );
+
+
+                alert("Login Successful");
+
+                window.location.href = "index.html";
+
+            } else {
+
+                alert(
+                    data.message ||
+                    data.error ||
+                    "Login failed"
+                );
+
+            }
+
+        } catch (err) {
+
+            console.error("Login error:", err);
+
+            alert(
+                "Unable to connect to the server. Please try again."
+            );
+
+        }
+
+    });
 
 }

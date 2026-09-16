@@ -1,28 +1,56 @@
 const s3 = require("../config/aws");
 
-exports.uploadMedia = async (req,res)=>{
+exports.uploadMedia = async (req, res) => {
 
-try{
+    try {
 
-const file = req.file;
+        if (!req.file) {
+            return res.status(400).json({
+                error: "No file received"
+            });
+        }
 
-const params = {
-Bucket: process.env.S3_BUCKET,
-Key: Date.now()+"_"+file.originalname,
-Body: file.buffer,
-ContentType: file.mimetype
-};
-console.log("Bucket name:", process.env.S3_BUCKET);
+        const file = req.file;
 
-const data = await s3.upload(params).promise();
+        console.log("File received:", file.originalname);
 
-res.json({
-message:"Upload success",
-url:data.Location
-});
+        const safeFileName = file.originalname.replace(
+            /[^a-zA-Z0-9._-]/g,
+            "_"
+        );
 
-}catch(err){
-res.status(500).json({error:err.message});
-}
+        const key = `${Date.now()}_${safeFileName}`;
 
+        const params = {
+            Bucket: process.env.S3_BUCKET,
+            Key: key,
+            Body: file.buffer,
+            ContentType: file.mimetype
+        };
+
+        console.log("Uploading to S3...");
+        console.log("Bucket:", process.env.S3_BUCKET);
+        console.log("Region:", process.env.AWS_REGION);
+        console.log("Key:", key);
+
+        const result = await s3.upload(params).promise();
+
+        console.log("S3 Upload Success:", result.Location);
+
+        return res.status(200).json({
+            message: "Upload success",
+            url: result.Location
+        });
+
+    } catch (err) {
+
+        console.error("S3 Upload Error");
+        console.error("Code:", err.code);
+        console.error("Message:", err.message);
+
+        return res.status(500).json({
+            error: "File upload failed",
+            details: err.message
+        });
+    }
 };

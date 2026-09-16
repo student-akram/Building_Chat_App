@@ -111,35 +111,42 @@ senderId:socket.user.id
 
 /* MEDIA MESSAGE */
 
-socket.on("media_message", async(data)=>{
+socket.on("media_message", async (data) => {
 
-try{
+    try {
 
-const {roomId,url} = data;
+        const { roomId, url } = data;
 
-/* SAVE IMAGE LIKE NORMAL MESSAGE */
+        if (!roomId) {
+            console.log("Media message error: roomId missing");
+            return;
+        }
 
-const saved = await Message.create({
-message: url,
-roomId,
-senderId: socket.user.id
+        if (!url) {
+            console.log("Media message error: URL missing");
+            return;
+        }
+
+        const saved = await Message.create({
+            message: url,
+            roomId,
+            senderId: socket.user.id
+        });
+
+        io.to(roomId).emit("media_message", {
+            url: saved.message,
+            senderId: socket.user.id,
+            roomId,
+            createdAt: saved.createdAt
+        });
+
+    } catch (err) {
+
+        console.error("Media message error:", err);
+
+    }
+
 });
-
-/* SEND TO ROOM */
-
-io.to(roomId).emit("media_message",{
-url: saved.message,
-senderId: socket.user.id,
-createdAt: saved.createdAt
-});
-
-}catch(err){
-console.log(err);
-}
-
-});
-
-
 socket.on("disconnect",()=>{
 console.log("User disconnected:",socket.user.id);
 });

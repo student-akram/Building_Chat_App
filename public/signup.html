@@ -1,40 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat App Signup</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | Chat App</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="container">
+<div class="auth-page">
 
-<h2>Create Account</h2>
+    <div class="auth-card">
 
-<form id="signupForm">
+        <div class="brand">
+            <div class="brand-icon">💬</div>
+            <h1>Chat App</h1>
+        </div>
 
-<label>Name</label>
-<input id="name" type="text" placeholder="Enter your name" required>
+        <div class="auth-header">
+            <h2>Create account</h2>
+            <p>Join the conversation and start chatting.</p>
+        </div>
 
-<label>Email</label>
-<input id="email" type="email" placeholder="Enter your email" required>
+        <form id="signupForm">
 
-<label>Phone Number</label>
-<input id="phone" type="tel" placeholder="Enter your phone number" required>
+            <div class="input-group">
+                <label for="name">Full Name</label>
+                <input
+                    id="name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    autocomplete="name"
+                    required
+                >
+            </div>
 
-<label>Password</label>
-<input id="password" type="password" placeholder="Enter password" required>
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                >
+            </div>
 
-<button type="submit">Sign Up</button>
+            <div class="input-group">
+                <label for="phone">Phone Number</label>
+                <input
+                    id="phone"
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    autocomplete="tel"
+                    required
+                >
+            </div>
 
-<p class="link">
-Already have an account?
-<a href="login.html">Login</a>
-</p>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input
+                    id="password"
+                    type="password"
+                    placeholder="Create a password"
+                    autocomplete="new-password"
+                    minlength="6"
+                    required
+                >
+            </div>
 
-</form>
+            <button type="submit" class="auth-button">
+                Create Account
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+            <p>
+                Already have an account?
+                <a href="login.html">Login</a>
+            </p>
+        </div>
+
+    </div>
 
 </div>
 
